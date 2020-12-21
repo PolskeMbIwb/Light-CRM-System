@@ -84,3 +84,10 @@ class Ui_new_request(object):
         self.label_5.setText(_translate("new_request", "ID_департамента"))
         self.decline.setText(_translate("new_request", "Добавить"))
         self.add.setText(_translate("new_request", "Отмена"))
+
+
+class new_group(QtWidgets.QMainWindow, Ui_new_request):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.retranslateUi(self)

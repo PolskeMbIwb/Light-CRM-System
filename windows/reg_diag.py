@@ -166,3 +166,10 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "Подтвердите пароль:"))
         self.pushButton_2.setText(_translate("Dialog", "Зарегистрироваться"))
         self.pushButton.setText(_translate("Dialog", "Отмена"))
+
+
+class reg_diag(QtWidgets.QDialog, Ui_Dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.retranslateUi(self)

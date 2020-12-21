@@ -543,7 +543,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "CourseWork"))
         self.label_3.setText(_translate("MainWindow", "Пользователь: "))
         self.label_4.setText(_translate("MainWindow", "Роль: "))
         self.pushButton.setText(_translate("MainWindow", "Сменить пользователя"))
@@ -659,4 +659,12 @@ class Ui_MainWindow(object):
         item = self.sets.horizontalHeaderItem(3)
         item.setText(_translate("MainWindow", "ID_запроса"))
         self.add_new_set.setText(_translate("MainWindow", "Добавить комплект"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.set_tab), _translate("MainWindow", "Комплекты оборудования"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.set_tab),
+                                  _translate("MainWindow", "Комплекты оборудования"))
+
+
+class mainW(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.retranslateUi(self)

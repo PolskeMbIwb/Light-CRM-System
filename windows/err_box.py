@@ -49,3 +49,14 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.pushButton.setText(_translate("Dialog", "OK"))
         self.label.setText(_translate("Dialog", "ОШИБКА: "))
+
+
+class err_box(QtWidgets.QDialog, Ui_Dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.retranslateUi(self)
+
+    def decline(self):
+        self.close()
+        return

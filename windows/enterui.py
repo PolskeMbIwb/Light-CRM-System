@@ -52,3 +52,16 @@ class Ui_Dialog(object):
         self.reg.setText(_translate("Dialog", "Регистрация"))
         self.login.setText(_translate("Dialog", "Вход"))
         self.label.setText(_translate("Dialog", "Добро пожаловать"))
+
+
+class enter(QtWidgets.QDialog, Ui_Dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.retranslateUi(self)
+        self.show()
+        self
+
+    def decline(self):
+        self.close()
+        return
