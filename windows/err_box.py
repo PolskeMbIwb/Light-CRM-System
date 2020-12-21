@@ -56,6 +56,7 @@ class err_box(QtWidgets.QDialog, Ui_Dialog):
         super().__init__()
         self.setupUi(self)
         self.retranslateUi(self)
+        self.pushButton.clicked.connect(self.decline)
 
     def decline(self):
         self.close()

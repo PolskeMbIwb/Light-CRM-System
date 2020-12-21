@@ -1,5 +1,6 @@
 import psycopg2
 import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from windows import (mainW, err_box, enterui,
                      add_newclintui,
@@ -26,12 +27,16 @@ class App:
         """
         Инициализация всех окон программы
         """
-        self.regW = reg_diag.reg_diag()
-        self.loginW = login.login()
-        self.mainWin = mainW.mainW()
+
+        # with closing(psycopg2.connect(dbname='postgres', user='postgres',
+        #                              password='ttblue2020', host='localhost')) as self.conn:
+        self.enter = enterui.enter()
+        self.new_client = add_newclintui.new_client()
+        self.new_client.show()
+        """
         self.upd_work = upd_workui.upd_workui()
         self.err = err_box.err_box()
-        self.enter = enterui.enter()
+        
         self.add_award = add_new_awardui.new_award()
         self.add_equip = add_new_equipui.new_equip()
         self.add_group = add_new_groupui.new_group()
@@ -40,7 +45,7 @@ class App:
         self.add_sanct = add_new_sanctui.new_sanct()
         self.add_request = add_new_requestui.new_req()
         self.add_shift = add_new_shiftui.new_shift()
-
+        """
 
 
 def main():
