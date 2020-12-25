@@ -16,7 +16,9 @@ from windows import (err_box, enterui,
                      add_new_groupui,
                      add_new_equipui,
                      add_new_awardui,
-                     reg_diag, login, upd_workui)
+                     reg_diag, login)
+import psycopg2
+from contextlib import closing
 import windows
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -360,6 +362,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.shifts = QtWidgets.QTableWidget(self.horizontalLayoutWidget_10)
+        self.shifts.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.shifts.setObjectName("shifts")
         self.shifts.setColumnCount(4)
         self.shifts.setRowCount(0)
@@ -401,7 +404,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
         self.workers = QtWidgets.QTableWidget(self.horizontalLayoutWidget_12)
         self.workers.setObjectName("workers")
-        self.workers.setColumnCount(10)
+        self.workers.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.workers.setColumnCount(11)
         self.workers.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.workers.setHorizontalHeaderItem(0, item)
@@ -423,6 +427,8 @@ class Ui_MainWindow(object):
         self.workers.setHorizontalHeaderItem(8, item)
         item = QtWidgets.QTableWidgetItem()
         self.workers.setHorizontalHeaderItem(9, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.workers.setHorizontalHeaderItem(10, item)
         self.workers.horizontalHeader().setCascadingSectionResizes(True)
         self.workers.horizontalHeader().setSortIndicatorShown(True)
         self.workers.horizontalHeader().setStretchLastSection(True)
@@ -438,6 +444,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_16.setObjectName("horizontalLayout_16")
         self.sanctions = QtWidgets.QTableWidget(self.horizontalLayoutWidget_14)
         self.sanctions.setObjectName("sanctions")
+        self.sanctions.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.sanctions.setColumnCount(4)
         self.sanctions.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
@@ -476,6 +483,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
         self.awards = QtWidgets.QTableWidget(self.horizontalLayoutWidget_16)
         self.awards.setObjectName("awards")
+        self.awards.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.awards.setColumnCount(4)
         self.awards.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
@@ -516,6 +524,7 @@ class Ui_MainWindow(object):
         self.sets = QtWidgets.QTableWidget(self.horizontalLayoutWidget_18)
         self.sets.setObjectName("sets")
         self.sets.setColumnCount(4)
+        self.sets.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.sets.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.sets.setHorizontalHeaderItem(0, item)
@@ -605,9 +614,9 @@ class Ui_MainWindow(object):
         item = self.reviews.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "Текст отзыва"))
         item = self.reviews.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Оценка (до 10)"))
+        item.setText(_translate("MainWindow", "ID_клиента"))
         item = self.reviews.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Клиент"))
+        item.setText(_translate("MainWindow", "Оценка"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.review_tab), _translate("MainWindow", "Отзывы"))
         item = self.shifts.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "ID_смены"))
@@ -620,25 +629,27 @@ class Ui_MainWindow(object):
         self.add_new_shift.setText(_translate("MainWindow", "Добавить смену"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.shifts_tab), _translate("MainWindow", "Смены"))
         item = self.workers.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "ID_работника"))
-        item = self.workers.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "Имя работника"))
-        item = self.workers.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "Личное дело"))
-        item = self.workers.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "ID_отдела"))
-        item = self.workers.horizontalHeaderItem(4)
         item.setText(_translate("MainWindow", "Зарплата"))
-        item = self.workers.horizontalHeaderItem(5)
+        item = self.workers.horizontalHeaderItem(1)
+        item.setText(_translate("MainWindow", "Номер личного дела"))
+        item = self.workers.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Номер телефона"))
-        item = self.workers.horizontalHeaderItem(6)
+        item = self.workers.horizontalHeaderItem(3)
+        item.setText(_translate("MainWindow", "Имя работника"))
+        item = self.workers.horizontalHeaderItem(4)
+        item.setText(_translate("MainWindow", "ID_работника"))
+        item = self.workers.horizontalHeaderItem(5)
         item.setText(_translate("MainWindow", "EMAIL"))
-        item = self.workers.horizontalHeaderItem(7)
-        item.setText(_translate("MainWindow", "Должность"))
-        item = self.workers.horizontalHeaderItem(8)
+        item = self.workers.horizontalHeaderItem(6)
         item.setText(_translate("MainWindow", "Номер медкнижки"))
+        item = self.workers.horizontalHeaderItem(7)
+        item.setText(_translate("MainWindow", "Логин"))
+        item = self.workers.horizontalHeaderItem(8)
+        item.setText(_translate("MainWindow", "Отдел"))
         item = self.workers.horizontalHeaderItem(9)
         item.setText(_translate("MainWindow", "Адрес"))
+        item = self.workers.horizontalHeaderItem(10)
+        item.setText(_translate("MainWindow", "Должность"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.workers_tab), _translate("MainWindow", "Работники"))
         item = self.sanctions.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "ID_санкции"))
@@ -674,21 +685,48 @@ class Ui_MainWindow(object):
 
 
 class mainW(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, log_pas):
+    def __init__(self, log_pas: tuple, role):
         super().__init__()
         self.setupUi(self)
         self.retranslateUi(self)
         self.logpas = log_pas
-        print(self.logpas)
+        self.not_allow_names = r'1234567890,./\";:<>}{$@!*^&[]+-_#~`'
+        self.not_allow_spec = r'/\";:<>}{$!*^&[]+-_@#~`'
+        self.label_3.setText('Пользователь: ' + str(log_pas[0]))
+        self.label_4.setText('Роль: ' + str(role))
         self.pushButton.clicked.connect(self.changeUser)
         self.add_new_set.clicked.connect(self.make_new_set)
-        self.add_new_awards.clicked.connect(self.make_new_set)
+        self.add_new_awards.clicked.connect(self.make_new_award)
         self.add_new_client_tab.clicked.connect(self.make_new_client)
         self.add_new_equip.clicked.connect(self.make_new_equip)
         self.add_new_request_b.clicked.connect(self.make_new_request)
         self.add_new_shift.clicked.connect(self.make_new_shift)
         self.add_new_group.clicked.connect(self.make_new_group)
         self.add_new_sanctions.clicked.connect(self.make_new_sanct)
+        self.tabs = [self.requests, self.clients, self.groups, self.equipments, self.reviews,
+                     self.shifts, self.workers, self.sanctions, self.awards, self.sets]
+        self.update_screens()
+
+    def update_screens(self):
+        with closing(psycopg2.connect(dbname='coursework', user=str(self.logpas[0]),
+                                      password=str(self.logpas[1]), host='localhost')) as conn:
+            for item in self.tabs:
+                tab = item.objectName()
+                cursor = conn.cursor()
+                req = 'select * from ' + tab
+                cursor.execute(req)
+                cur_rows = item.rowCount()
+                if cur_rows == 0:
+                    item.insertRow(0)
+                y = 0
+                for row in cursor:
+                    x = 0
+                    for cell in row:
+                        item.setItem(y, x, QtWidgets.QTableWidgetItem(str(cell)))
+                        x += 1
+                    y += 1
+                    if y >= cur_rows:
+                        item.insertRow(y)
 
     def changeUser(self):
         self.enter = windows.enterui.enter()
@@ -696,37 +734,34 @@ class mainW(QtWidgets.QMainWindow, Ui_MainWindow):
         self.close()
 
     def make_new_set(self):
-        self.new_set = add_new_setui.new_set()
+        self.new_set = add_new_setui.new_set(self)
         self.new_set.show()
+        self.workers.insertRow(self.workers.rowCount())
 
     def make_new_client(self):
-        self.new_client = add_newclintui.new_client()
+        self.new_client = add_newclintui.new_client(self)
         self.new_client.show()
 
     def make_new_group(self):
-        self.new_group = add_new_groupui.new_group()
+        self.new_group = add_new_groupui.new_group(self)
         self.new_group.show()
 
     def make_new_equip(self):
-        self.new_equip = add_new_equipui.new_equip()
+        self.new_equip = add_new_equipui.new_equip(self)
         self.new_equip.show()
 
-    def show_reviews(self):
-        pass
-
     def make_new_shift(self):
-        self.make_shift = add_new_shiftui.new_shift()
+        self.make_shift = add_new_shiftui.new_shift(self)
         self.make_shift.show()
 
     def make_new_sanct(self):
-        self.new_sanct = add_new_sanctui.new_sanct()
+        self.new_sanct = add_new_sanctui.new_sanct(self)
         self.new_sanct.show()
 
     def make_new_award(self):
-        self.new_award = add_new_awardui.new_award()
+        self.new_award = add_new_awardui.new_award(self)
         self.new_award.show()
 
     def make_new_request(self):
-        self.new_request = add_new_requestui.new_req()
+        self.new_request = add_new_requestui.new_req(self)
         self.new_request.show()
-
